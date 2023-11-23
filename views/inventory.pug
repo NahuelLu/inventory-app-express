@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h1 Inventory Section
+  div(class="general-container")
+    div(class="bar-links-container")
+        div(class="links-container")
+          h3 Categories
+          div
+            a(href="/inventory/category/categories") Show categories
+          div
+            a(href="/inventory/category/createCategory") Create Category
+        div(class="links-container")
+          h3 Items
+          div
+            a(href="/inventory/item/items") Show items
+          div
+            a(href="/inventory/item/createItem") Create item
+    div(class="display-content-container")
+      block display-content
+
+  
