@@ -1,7 +1,10 @@
 extends inventory
 block display-content
-    if categories.length > 0
+    div(class="display-categories-container")
+        if categories.length > 0
         each category in categories
-            div= category.name
-    else
-        p There's not category to show! Sorry maybe it's empty the database
+            div(class="category-container")
+                    a(href=category.url)=category.name 
+                    p=category.description
+        else
+            p There's not category to show! Sorry maybe it's empty the database
