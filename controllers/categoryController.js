@@ -1,5 +1,7 @@
 const CategoryModel = require("../models/category")
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
+
 const get_all_categories = asyncHandler(async (req, res, next) => {
     const categories = await CategoryModel.find().exec()
     res.render("category", {
@@ -7,12 +9,30 @@ const get_all_categories = asyncHandler(async (req, res, next) => {
         categories: categories
     })
 });
-const category_create_get = asyncHandler(async (req, res, next) => {
-    res.send("NOT implemented to create a category GET")
-})
-const category_create_post = asyncHandler(async (req, res, next) => {
-    res.send("NOT implemented to create a category POST")
-})
+const category_create_get =  (req, res, next) => {
+    res.render("category_form",{
+        title: "Create a category"
+    })
+}
+const category_create_post =[
+    body("name", "Empty name").trim().isLength({ min: 1 }).escape(),
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+        const category = new CategoryModel({ name: req.body.name , description: req.body.description});
+
+        if (!errors.isEmpty()) {
+            res.render("category_form",{
+                title: "Category Form",
+                category,
+                errors: errors.array()
+            })
+          } else {
+            await category.save()
+            res.redirect(category.url)
+        }
+    })
+]
+ 
 const category_update_get = asyncHandler(async (req, res, next) => {
     res.send("NOT implemented to update this category with ID:"+req.params.id+",GET")
 })
