@@ -1,0 +1,18 @@
+extends inventory
+
+block display-content
+    h1=title
+    if itemsCategory.length 
+        h2 You need to delete first these items related to this category that you want to delete...
+        ul 
+        for item in itemsCategory
+            li= item.name
+    else 
+        p Do you really want to delete this category?
+        p After this you can't recover it again
+
+        form(method='POST' action='')
+            div.form-group
+                input#categoryid.form-control(type='hidden',name='categoryid', required='true', value=category._id )
+
+                button.btn.btn-primary(type='submit') Delete

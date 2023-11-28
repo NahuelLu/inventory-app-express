@@ -1,6 +1,8 @@
 const CategoryModel = require("../models/category")
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
+const ItemModel = require("../models/item");
+const Category = require("../models/category");
 
 const get_all_categories = asyncHandler(async (req, res, next) => {
     const categories = await CategoryModel.find().exec()
@@ -63,10 +65,18 @@ const category_update_post = [
     })
 ]
 const category_delete_get = asyncHandler(async (req, res, next) => {
-    res.send("NOT implemented to delete a category GET")
+    const itemsCategory = await ItemModel.find({category:req.params.id}).exec()
+    const category = await CategoryModel.findById(req.params.id).exec()
+    res.render("category_delete",{
+        title: "Delete category",
+        itemsCategory,
+        category
+    })
+    
 })
-const category_delete_post = asyncHandler(async (req, res, next) => {
-    res.send("NOT implemented to delete a category POST")
+const category_delete_post = asyncHandler(async (req, res) => {
+    await CategoryModel.findByIdAndDelete(req.body.categoryid).exec()
+    res.redirect("/inventory/category/categories")
 }) 
 const category_detail_get = asyncHandler(async (req, res, next) => {
     const category = await CategoryModel.findById(req.params.id).exec()
