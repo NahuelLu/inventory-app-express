@@ -16,6 +16,8 @@ const category_create_get =  (req, res, next) => {
 }
 const category_create_post =[
     body("name", "Empty name").trim().isLength({ min: 1 }).escape(),
+    body("description", "Empty Description").trim().isLength({ min: 1 }).escape(),
+
     asyncHandler(async (req, res, next) => {
         const errors = validationResult(req);
         const category = new CategoryModel({ name: req.body.name , description: req.body.description});
@@ -26,7 +28,7 @@ const category_create_post =[
                 category,
                 errors: errors.array()
             })
-          } else {
+        } else {
             await category.save()
             res.redirect(category.url)
         }
@@ -34,11 +36,32 @@ const category_create_post =[
 ]
  
 const category_update_get = asyncHandler(async (req, res, next) => {
-    res.send("NOT implemented to update this category with ID:"+req.params.id+",GET")
+    const category = await CategoryModel.findById(req.params.id)
+    res.render("category_form",{
+        title: "Update category",
+        category
+    })
 })
-const category_update_post = asyncHandler(async (req, res, next) => {
-    res.send("NOT implemented to update this category with ID:"+req.params.id+", POST")
-}) 
+const category_update_post = [
+    body("name", "Empty name").trim().isLength({ min: 1 }).escape(),
+    body("description", "Empty Description").trim().isLength({ min: 1 }).escape(),
+
+    asyncHandler(async (req, res) => {
+        const errors = validationResult(req);
+        const category = new CategoryModel({ name: req.body.name , description: req.body.description, _id: req.params.id});
+
+        if (!errors.isEmpty()) {
+            res.render("category_form",{
+                title: "Category Form",
+                category,
+                errors: errors.array()
+            })
+        } else {
+            const categoryUpdated = await CategoryModel.findByIdAndUpdate(req.params.id,category).exec()
+            res.redirect(categoryUpdated.url)
+        }
+    })
+]
 const category_delete_get = asyncHandler(async (req, res, next) => {
     res.send("NOT implemented to delete a category GET")
 })

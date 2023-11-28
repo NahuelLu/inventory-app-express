@@ -106,3 +106,6 @@ main h1{
   align-items: center;
   row-gap: 10px;
 }
+.category_detail_container{
+  text-align: center;
+}
