@@ -83,9 +83,19 @@ const item_update_post = [
 
     })
 ]
-const item_delete_get = asyncHandler(async (req, res, next) => {
+const item_delete_get =  asyncHandler(async (req, res) => {
+    const item = await ItemModel.findById(req.params.id).exec()
+    res.render("item_delete",{
+        title: "Delete Item",
+        item
+    })
 });
+
+
 const item_delete_post = asyncHandler(async (req, res, next) => {
+    await ItemModel.findByIdAndDelete(req.body.item_id).exec()
+    res.redirect("/inventory/item/items")
+
 });
 const item_get_details = asyncHandler(async (req, res, next) => {
     const item = await ItemModel.findById(req.params.id).populate('category').exec()

@@ -1,0 +1,12 @@
+extends inventory
+
+block display-content
+    h1=title
+    p= "Do you really want to delete this item called: " + item.name+"?"
+    p After this you can't recover it again, be careful
+
+    form(method='POST' action='')
+        div.form-group
+            input#itemid.form-control(type='hidden',name='item_id', required='true', value=item._id )
+
+            button.btn.btn-primary(type='submit') Delete
