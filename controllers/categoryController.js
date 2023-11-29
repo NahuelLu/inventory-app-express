@@ -2,7 +2,6 @@ const CategoryModel = require("../models/category")
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const ItemModel = require("../models/item");
-const Category = require("../models/category");
 
 const get_all_categories = asyncHandler(async (req, res, next) => {
     const categories = await CategoryModel.find().exec()

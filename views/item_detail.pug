@@ -1,0 +1,12 @@
+extends inventory
+block display-content
+    div(class="item_detail_container")
+        h3=item.name 
+        h4=item.description
+        h4= "Category: "+ item.category.name
+        h4="Price: "+ item.price
+        h4="Stock: "+ item.number_in_stock
+        p 
+            a(href=item.url+'/delete') Delete item
+        p 
+            a(href=item.url+'/update') Update item
