@@ -1,6 +1,8 @@
 const ItemModel = require("../models/item")
 const asyncHandler = require("express-async-handler");
 const CategoryModel = require("../models/category")
+const { body, validationResult } = require("express-validator");
+
 const get_all_items = asyncHandler(async (req, res, next) => {
     const items = await ItemModel.find().exec()
     res.render("items", {
@@ -9,11 +11,37 @@ const get_all_items = asyncHandler(async (req, res, next) => {
     })
 });
 
-const item_create_get = (req, res, next) => {
-}
+const item_create_get = asyncHandler(async (req, res, next) => {
+    const categories = await CategoryModel.find().exec()
+    res.render("item_form",{
+        title: "Create an item",
+        categories
+    })
+});
+
+
 const item_create_post = [
+    body("name", "Name must not be empty.").trim().isLength({ min: 1 }).escape(),
+    body("description", "Description must not be empty.").trim().isLength({ min: 1 }).escape(),
+    body("category", "Category must not be empty.").trim().isLength({ min: 1 }).escape(),
+    body("price", "Price must not be empty").trim().isLength({ min: 1 }).escape(),
+    body("stock", "Stock must not be empty").trim().isLength({ min: 1 }).escape(),
     asyncHandler(async (req, res, next) => {
-})
+        const errors = validationResult(req)
+        const item = new ItemModel({ name: req.body.name , description: req.body.description,category: req.body.category,price: req.body.price, number_in_stock: req.body.stock})
+        if(!errors.isEmpty()){
+            const categories = await CategoryModel.find().exec()
+            res.render("item_form",{
+                title: "Create an item",
+                categories,
+                errors,
+                item
+            })
+        }else{
+            await item.save()
+            res.redirect(item.url)
+        }
+    })
 ]
 const item_update_get = asyncHandler(async (req, res, next) => {
 });

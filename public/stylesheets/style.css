@@ -112,3 +112,7 @@ main h1{
 .item_detail_container{
   text-align: center
 }
+.items-container{
+  display: flex;
+  gap: 10px;
+}

@@ -1,7 +1,8 @@
 extends inventory
 block display-content
     if items.length > 0
-        each item in items
-            a(href=item.url)= item.name
+        div(class="items-container")
+            each item in items
+                a(href=item.url)= item.name
     else
         p There's not items to show! Sorry maybe it's empty the database
