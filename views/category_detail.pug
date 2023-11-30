@@ -1,7 +1,8 @@
 extends inventory
 block display-content
     div(class="category_detail_container")
-        h3=category.name 
+        h1=category.name 
+        img(src=category.url_image width="300" )
         h4=category.description
         p
             a(href=category.url+'/delete') Delete category

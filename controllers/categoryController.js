@@ -2,6 +2,27 @@ const CategoryModel = require("../models/category")
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const ItemModel = require("../models/item");
+const multer  = require('multer')
+const path = require("path")
+
+function fileFilter (req, file, cb) {
+    const allowedMimes = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif'];
+    if (allowedMimes.includes(file.mimetype)) {
+        cb(null, true)
+    } else {
+        cb(null, false)  
+    }
+}
+const storage = multer.diskStorage({
+    destination: (req,file,cb) =>{
+        cb(null,'public/images/category')
+    },
+    filename: (req,file,cb) =>{
+        console.log(file)
+        cb(null,Date.now() + path.extname(file.originalname))
+    }
+})
+const upload = multer({storage:storage,fileFilter})
 
 const get_all_categories = asyncHandler(async (req, res, next) => {
     const categories = await CategoryModel.find().exec()
@@ -16,13 +37,13 @@ const category_create_get =  (req, res, next) => {
     })
 }
 const category_create_post =[
+    upload.single('image'),
     body("name", "Empty name").trim().isLength({ min: 1 }).escape(),
     body("description", "Empty Description").trim().isLength({ min: 1 }).escape(),
-
     asyncHandler(async (req, res, next) => {
+        console.log(req.file.path)
         const errors = validationResult(req);
-        const category = new CategoryModel({ name: req.body.name , description: req.body.description});
-
+        const category = new CategoryModel({ name: req.body.name , description: req.body.description, img:req.file.filename});
         if (!errors.isEmpty()) {
             res.render("category_form",{
                 title: "Category Form",
@@ -44,12 +65,13 @@ const category_update_get = asyncHandler(async (req, res, next) => {
     })
 })
 const category_update_post = [
+    upload.single('image'),
     body("name", "Empty name").trim().isLength({ min: 1 }).escape(),
     body("description", "Empty Description").trim().isLength({ min: 1 }).escape(),
 
     asyncHandler(async (req, res) => {
         const errors = validationResult(req);
-        const category = new CategoryModel({ name: req.body.name , description: req.body.description, _id: req.params.id});
+        const category = new CategoryModel({ name: req.body.name , description: req.body.description, _id: req.params.id,img:req.file.filename});
 
         if (!errors.isEmpty()) {
             res.render("category_form",{
