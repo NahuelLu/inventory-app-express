@@ -2,7 +2,13 @@ const ItemModel = require("../models/item")
 const asyncHandler = require("express-async-handler");
 const CategoryModel = require("../models/category")
 const { body, validationResult } = require("express-validator");
+const {fileFilter,storage} = require("./helpers/aux_multer");
+const multer = require("multer")
 
+const upload = multer({
+    storage:storage("items"),
+    fileFilter
+})
 const get_all_items = asyncHandler(async (req, res, next) => {
     const items = await ItemModel.find().exec()
     res.render("items", {
@@ -21,6 +27,7 @@ const item_create_get = asyncHandler(async (req, res, next) => {
 
 
 const item_create_post = [
+    upload.single("image"),
     body("name", "Name must not be empty.").trim().isLength({ min: 1 }).escape(),
     body("description", "Description must not be empty.").trim().isLength({ min: 1 }).escape(),
     body("category", "Category must not be empty.").trim().isLength({ min: 1 }).escape(),
@@ -28,7 +35,7 @@ const item_create_post = [
     body("stock", "Stock must not be empty").trim().isLength({ min: 1 }).escape(),
     asyncHandler(async (req, res, next) => {
         const errors = validationResult(req)
-        const item = new ItemModel({ name: req.body.name , description: req.body.description,category: req.body.category,price: req.body.price, number_in_stock: req.body.stock})
+        const item = new ItemModel({ name: req.body.name , description: req.body.description,category: req.body.category,price: req.body.price, number_in_stock: req.body.stock,img:req.file.filename})
         if(!errors.isEmpty()){
             const categories = await CategoryModel.find().exec()
             res.render("item_form",{
@@ -53,6 +60,7 @@ const item_update_get = asyncHandler(async (req, res) => {
     })
 });
 const item_update_post = [
+    upload.single("image"),
     body("name", "Name must not be empty.").trim().isLength({ min: 1 }).escape(),
     body("description", "Description must not be empty.").trim().isLength({ min: 1 }).escape(),
     body("category", "Category must not be empty.").trim().isLength({ min: 1 }).escape(),
@@ -66,7 +74,8 @@ const item_update_post = [
             category: req.body.category,
             price: req.body.price, 
             number_in_stock: req.body.stock,
-            _id: req.params.id
+            _id: req.params.id,
+            img:req.file.filename
         })
         if(!errors.isEmpty()){
             const categories = await CategoryModel.find().exec()

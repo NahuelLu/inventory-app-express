@@ -2,6 +2,7 @@ extends inventory
 block display-content
     div(class="item_detail_container")
         h3=item.name 
+        img(src=item.url_image width="300" )
         h4=item.description
         h4= "Category: "+ item.category.name
         h4="Price: "+ item.price
